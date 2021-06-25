@@ -13,67 +13,64 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+
+import java.util.Iterator;
+
+import by.lfb.game.models.PuzzleButton;
+import by.lfb.game.models.StackPuzzle;
 
 public class GameScreen implements Screen {
 	private final Pzzlnom game;
 	private Stage stage;
 	private OrthographicCamera camera;
+	private Table tablePuzzleButtons;
+	private StackPuzzle stackPuzzle;
+	private Array<PuzzleButton> arrPuzzles;
+	private Integer X;
 
 	public GameScreen (final Pzzlnom game) {
+		X = 200;
 		this.game = game;
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 800, 480);
 		stage = new Stage();
+		stackPuzzle = new StackPuzzle();
+		arrPuzzles = new Array<PuzzleButton>();
+		addPuzzleInArray();
 	}
 
 	@Override
 	public void render (float delta) {
-		//Gdx.gl.glClearColor(1f,1f,1f,1f);
 		ScreenUtils.clear(0, 0.2f, 0.2f, 1);
 		update(delta);
+
+		for (PuzzleButton arrPuzzle: arrPuzzles){
+			stage.addActor(arrPuzzle);
+		}
 		stage.draw();
-/*		camera.update();
-		game.batch.setProjectionMatrix(camera.combined);*/
 
-/*		game.batch.begin();
-
-		game.batch.end();*/
-/*		game.batch.begin();
-		game.font.draw(game.batch, "Drops Collected: " + dropsGathered, 0, 480);
-		game.batch.draw(bucketImage, bucket.x, bucket.y);
-		for(Rectangle raindrop: raindrops) {
-			game.batch.draw(dropImage, raindrop.x, raindrop.y);
-		}
-		game.batch.end();
-
-		if(Gdx.input.isTouched()) {
-			Vector3 touchPos = new Vector3();
-			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-			camera.unproject(touchPos);
-			bucket.x = touchPos.x - 64 / 2;
+		if(Gdx.input.isTouched()){
+			addPuzzleInArray();
 		}
 
-		if(bucket.x < 0)
-			bucket.x = 0;
-		if(bucket.x > 800 - 64)
-			bucket.x = 800 - 64;
-
-		if(TimeUtils.nanoTime() - lastDropTime > 1000000000)
-			spawnRaindrop();
-
-		Iterator<Rectangle> iter = raindrops.iterator();
+		Iterator<PuzzleButton> iter = arrPuzzles.iterator();
 		while (iter.hasNext()) {
-			Rectangle raindrop = iter.next();
-			raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
-			if (raindrop.y + 64 < 0)
-				iter.remove();
-			if (raindrop.overlaps(bucket)) {
-				dropsGathered++;
-				iter.remove();
-			}
-		}*/
+			PuzzleButton puzzleButton = iter.next();
+			puzzleButton.setY(puzzleButton.getY()-200 * Gdx.graphics.getDeltaTime());
+			if (puzzleButton.getY() + X < 0) {
+				X += 105;
+				break;
+			};
+		}
+	}
 
+	private void addPuzzleInArray() {
+		PuzzleButton puzzleForAdd = stackPuzzle.getPuzzleFromStack();
+		puzzleForAdd.setX(400);
+		puzzleForAdd.setY(400);
+		arrPuzzles.add(puzzleForAdd);
 	}
 
 	private void update(float delta){
@@ -88,45 +85,20 @@ public class GameScreen implements Screen {
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
 		stage.clear();
-		initGrid();
+		//initGrid();
 	}
 
 	private void initGrid() {
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/impact2.ttf"));
-		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-		parameter.size = 22;
-		BitmapFont font12 = generator.generateFont(parameter);
-		generator.dispose();
-		Skin skin = new Skin();
-		skin.add("defaultFont", font12);
-		skin.addRegions(new TextureAtlas(Gdx.files.internal("puzzleBlocks.pack")));
-		skin.load(Gdx.files.internal("puzzleBlocks.json"));
-/*		Skin skinTemp = new Skin(Gdx.files.internal("puzzleBlocks.json"), new TextureAtlas("puzzleBlocks.pack"));*/
-		TextButton btn = new TextButton("1", skin, "dirt");
-		//Button[][] btnGrid = new Button[7][7];
-		/*Skin skin = new Skin();
-		TextureAtlas buttonAtlas = new TextureAtlas(Gdx.files.local("puzzleBlocks.pack"));
-		skin.addRegions(buttonAtlas);
-		BitmapFont font = new BitmapFont();
-
-		TextButton.TextButtonStyle btnStyle = new TextButton.TextButtonStyle();
-		btnStyle.up = skin.getDrawable("copper");
-		btnStyle.down = skin.getDrawable("dirt");
-		btnStyle.font = font;
-
-		Button btn1 = new TextButton("1", btnStyle);
-		btn1.setPosition(100, 100);
-		btn1.setHeight(100);
-		btn1.setWidth(100);
-
-		btn1.addListener(new ChangeListener() {
-			@Override
-			public void changed (ChangeEvent event, Actor actor) {
-				System.out.println("Button Pressed");
+		stackPuzzle = new StackPuzzle();
+		tablePuzzleButtons = new Table();
+		tablePuzzleButtons.setPosition(400,240);
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				tablePuzzleButtons.add(stackPuzzle.getPuzzleFromStack());
 			}
-		});
-*/
-		stage.addActor(btn);
+			tablePuzzleButtons.row();
+		}
+		stage.addActor(tablePuzzleButtons);
 	}
 
 	@Override
@@ -143,7 +115,5 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void dispose() {
-/*		dropImage.dispose();
-		bucketImage.dispose();*/
 	}
 }
