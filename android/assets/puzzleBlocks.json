@@ -8,6 +8,6 @@
   TextButtonStyle: {
     default: { font: defaultFont, fontColor: white }
     dirt: {down: copper, up: dirt, disabled: dirt, font: defaultFont, fontColor: green }
-    copper: {down: dirt, up: copper, disabled: copper, font: defaultFont, fontColor: white }
+    copper: {down: copperPress, up: copper, disabled: copper, font: defaultFont, fontColor: white }
   },
 }
