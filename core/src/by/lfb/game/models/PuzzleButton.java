@@ -11,15 +11,29 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 public class PuzzleButton extends TextButton{
 
-    public PuzzleButton(String text, Skin skin, String styleName) {
+    private String TYPE = "";
+    private static final float width = 50f;
+    private static final float height = 50f;
+
+    public PuzzleButton(final String text, Skin skin, String styleName) {
         super(text, skin, styleName);
+        this.setHeight(height);
+        this.setWidth(width);
+        TYPE = styleName;
         this.addListener(new ChangeListener() {
             @Override
             public void changed (ChangeEvent event, Actor actor) {
-                System.out.println("Button Pressed");
+                System.out.println(actor.getName());
             }
         });
+/*        this.addListener(new FocusListener() {
+             public boolean handle (Event event) {
+                 ComboList.addToCombo((PuzzleButton)event.getTarget());
+                 return true;
+            }
+        });*/
     }
+
     public static Skin getPuzzleSkin() {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/impact2.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -39,5 +53,17 @@ public class PuzzleButton extends TextButton{
         } else {
             return "copper";
         }
+    }
+
+    public String getTYPE() {
+        return TYPE;
+    }
+
+    public static float getFinalWidth() {
+        return width;
+    }
+
+    public static float getFinalHeight() {
+        return height;
     }
 }

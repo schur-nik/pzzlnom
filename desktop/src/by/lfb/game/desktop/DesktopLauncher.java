@@ -2,7 +2,7 @@ package by.lfb.game.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import by.lfb.game.GameScreen;
+
 import by.lfb.game.Pzzlnom;
 
 public class DesktopLauncher {
