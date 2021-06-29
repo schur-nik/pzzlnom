@@ -5,9 +5,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 
 public class PuzzleButton extends TextButton{
 
@@ -20,18 +24,43 @@ public class PuzzleButton extends TextButton{
         this.setHeight(height);
         this.setWidth(width);
         TYPE = styleName;
-        this.addListener(new ChangeListener() {
+        this.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                ComboList.addToCombo((PuzzleButton)event.getListenerActor());
+                ((PuzzleButton)event.getListenerActor()).getStyle().up = getPuzzleSkin().getDrawable(TYPE+"Press");
+                System.out.println(event.getListenerActor().getName());
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                ComboList.clearCombo();
+                ((TextButton)event.getListenerActor()).getStyle().up = getPuzzleSkin().getDrawable(TYPE);
+            }
+/*
+            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+
+            }*/
+        });
+/*        this.addListener(new ChangeListener() {
             @Override
             public void changed (ChangeEvent event, Actor actor) {
                 System.out.println(actor.getName());
             }
-        });
-/*        this.addListener(new FocusListener() {
-             public boolean handle (Event event) {
-                 ComboList.addToCombo((PuzzleButton)event.getTarget());
-                 return true;
-            }
         });*/
+        this.addListener(new FocusListener() {
+             public boolean handle (Event event) {
+                if (getClickListener().isPressed() &&
+                    !ComboList.containsInCombo((PuzzleButton) event.getTarget()) &&
+                    ((PuzzleButton) event.getTarget()).getTYPE().equalsIgnoreCase(ComboList.getTypeCombo())) {
+                    ((PuzzleButton)event.getTarget()).getStyle().up = getPuzzleSkin().getDrawable(TYPE+"Press");
+                    ComboList.addToCombo((PuzzleButton)event.getTarget());
+                }
+                return true;
+            }
+        });
     }
 
     public static Skin getPuzzleSkin() {

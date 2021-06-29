@@ -18,4 +18,15 @@ public class ComboList {
         typeCombo = null;
         comboList.clear();
     }
+
+    public static String getTypeCombo() {
+        return typeCombo;
+    }
+
+    public static Boolean containsInCombo(PuzzleButton puzzle) {
+        if (comboList.contains(puzzle, false))
+            return true;
+        else
+            return false;
+    }
 }
