@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import by.lfb.game.Pzzlnom;
+import by.lfb.game.models.ComboList;
 import by.lfb.game.models.PuzzleButton;
 import by.lfb.game.models.StackPuzzle;
 import by.lfb.game.models.TablePuzzles;

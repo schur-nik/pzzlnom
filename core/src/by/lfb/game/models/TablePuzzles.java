@@ -3,12 +3,15 @@ package by.lfb.game.models;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
+import java.lang.reflect.Array;
+
 public class TablePuzzles extends Table {
-    private PuzzleButton[][] tablePuzzles;
-    private int size;
+    private static PuzzleButton[][] tablePuzzles;
+    private static int size;
     private float x, y;
     private float posTableX, posTableY;
     private float gap = 0f;
@@ -36,12 +39,6 @@ public class TablePuzzles extends Table {
                 puzzleForAdd = StackPuzzle.getPuzzleFromStack();
                 puzzleForAdd.setPosition(x, y);
                 puzzleForAdd.setName(i+"/"+j);
-/*                puzzleForAdd.addListener(new ChangeListener() {
-                    @Override
-                    public void changed (ChangeEvent event, Actor actor) {
-                        System.out.println("test");
-                    }
-                });*/
                 tablePuzzles[i][j] = puzzleForAdd;
                 addActor(tablePuzzles[i][j]);
                 x += PuzzleButton.getFinalWidth() + gap;
@@ -52,8 +49,32 @@ public class TablePuzzles extends Table {
         return this;
     }
 
-    public PuzzleButton[][] getTablePuzzles() {
+    public static PuzzleButton[][] getTablePuzzles() {
         return tablePuzzles;
+    }
+
+/*    public PuzzleButton getCell() {
+        return super.getCell(actor);
+    }*/
+
+/*    public Integer getRow(PuzzleButton puzzleButton) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (tablePuzzles[i][j] == puzzleButton)
+                        return i;
+            }
+        }
+    }*/
+
+    public static Integer[] getPuzzlePos(Actor actor) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (tablePuzzles[i][j].equals(actor)) {
+                    return new Integer[] {i, j};
+                }
+            }
+        }
+        return new Integer[] {-1,-1};
     }
 
     @Override
@@ -69,10 +90,4 @@ public class TablePuzzles extends Table {
                 tablePuzzles[i][j].act(delta);
     }
 
-/*
-    @Override
-    public void setPosition(float x, float y) {
-        posTableX = x;
-        posTableY = y;
-    }*/
 }

@@ -1,7 +1,5 @@
 package by.lfb.game.models;
 
-
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 
 public class ComboList {
@@ -29,4 +27,9 @@ public class ComboList {
         else
             return false;
     }
+
+    public static Array<PuzzleButton> getComboList() {
+        return comboList;
+    }
+
 }

@@ -7,11 +7,15 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
+
+import java.util.Iterator;
 
 public class PuzzleButton extends TextButton{
 
@@ -35,14 +39,33 @@ public class PuzzleButton extends TextButton{
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                for (PuzzleButton puzzleButton : ComboList.getComboList()) {
+                    puzzleButton.getStyle().up = getPuzzleSkin().getDrawable(puzzleButton.TYPE);
+                }
                 ComboList.clearCombo();
-                ((TextButton)event.getListenerActor()).getStyle().up = getPuzzleSkin().getDrawable(TYPE);
             }
-/*
-            @Override
-            public void touchDragged(InputEvent event, float x, float y, int pointer) {
 
+/*            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                if (TablePuzzles.getPuzzlePos(event.getTarget()) != null) {
+                    if (!ComboList.containsInCombo((PuzzleButton) event.getTarget()) && ((PuzzleButton) event.getTarget()).getTYPE().equalsIgnoreCase(ComboList.getTypeCombo())) {
+                        ((PuzzleButton) event.getTarget()).getStyle().up = getPuzzleSkin().getDrawable(TYPE + "Press");
+                        ComboList.addToCombo((PuzzleButton) event.getTarget());
+                    }
+                }
             }*/
+        });
+        this.addListener(new FocusListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (TablePuzzles.getPuzzlePos(event.getTarget().getParent()) != null) {
+                    if (!ComboList.containsInCombo((PuzzleButton) event.getTarget().getParent()) && ((PuzzleButton) event.getTarget().getParent()).getTYPE().equalsIgnoreCase(ComboList.getTypeCombo())) {
+                        ((PuzzleButton) event.getTarget().getParent()).getStyle().up = getPuzzleSkin().getDrawable(TYPE + getTrueMerge(((PuzzleButton) event.getTarget().getParent()), ComboList.getComboList().get(ComboList.getComboList().size-1)));
+                        ComboList.addToCombo((PuzzleButton) event.getTarget().getParent());
+                    }
+                }
+                return true;
+            }
         });
 /*        this.addListener(new ChangeListener() {
             @Override
@@ -50,17 +73,17 @@ public class PuzzleButton extends TextButton{
                 System.out.println(actor.getName());
             }
         });*/
-        this.addListener(new FocusListener() {
+/*        this.addListener(new FocusListener() {
              public boolean handle (Event event) {
                 if (getClickListener().isPressed() &&
-                    !ComboList.containsInCombo((PuzzleButton) event.getTarget()) &&
+                    !ComboList.containsInCombo(event.getTarget()) &&
                     ((PuzzleButton) event.getTarget()).getTYPE().equalsIgnoreCase(ComboList.getTypeCombo())) {
                     ((PuzzleButton)event.getTarget()).getStyle().up = getPuzzleSkin().getDrawable(TYPE+"Press");
                     ComboList.addToCombo((PuzzleButton)event.getTarget());
                 }
                 return true;
             }
-        });
+        });*/
     }
 
     public static Skin getPuzzleSkin() {
@@ -94,5 +117,16 @@ public class PuzzleButton extends TextButton{
 
     public static float getFinalHeight() {
         return height;
+    }
+
+    public String getTrueMerge(PuzzleButton curr, PuzzleButton prev) {
+        Integer rowCurr, columnCurr, rowPrev, columnPrev;
+        rowCurr = TablePuzzles.getPuzzlePos(curr)[0];
+        columnCurr = TablePuzzles.getPuzzlePos(curr)[1];
+        rowPrev = TablePuzzles.getPuzzlePos(prev)[0];
+        columnPrev = TablePuzzles.getPuzzlePos(prev)[1];
+        if (rowCurr < rowPrev && columnCurr == columnPrev) {return "MergeTop";};
+        if (rowCurr > rowPrev && columnCurr == columnPrev) {return "MergeBottom";};
+        return "";
     }
 }
