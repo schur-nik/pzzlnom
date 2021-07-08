@@ -58,13 +58,18 @@ public class PuzzleButton extends TextButton{
         this.addListener(new FocusListener() {
             @Override
             public boolean handle(Event event) {
-                if (TablePuzzles.getPuzzlePos(event.getTarget().getParent()) != null) {
+                if (!TablePuzzles.getPuzzlePos(event.getTarget().getParent()).equals(new Integer[]{-1, -1})) {
                     if (!ComboList.containsInCombo((PuzzleButton) event.getTarget().getParent()) && ((PuzzleButton) event.getTarget().getParent()).getTYPE().equalsIgnoreCase(ComboList.getTypeCombo())) {
-                        ((PuzzleButton) event.getTarget().getParent()).getStyle().up = getPuzzleSkin().getDrawable(TYPE + getTrueMerge(((PuzzleButton) event.getTarget().getParent()), ComboList.getComboList().get(ComboList.getComboList().size-1)));
+                        setSkinLineCombo((PuzzleButton) event.getTarget().getParent());
                         ComboList.addToCombo((PuzzleButton) event.getTarget().getParent());
                     }
                 }
                 return true;
+            }
+
+            private void setSkinLineCombo(PuzzleButton puzzleButton) {
+                ComboList.getLast().getStyle().up = getPuzzleSkin().getDrawable(ComboList.getLast().TYPE + getTrueMerge(ComboList.getLast(), ComboList.getPrevLast(), puzzleButton));
+                puzzleButton.getStyle().up = getPuzzleSkin().getDrawable(puzzleButton.TYPE + getTrueMerge(puzzleButton, ComboList.getLast(), null));
             }
         });
 /*        this.addListener(new ChangeListener() {
@@ -119,14 +124,42 @@ public class PuzzleButton extends TextButton{
         return height;
     }
 
-    public String getTrueMerge(PuzzleButton curr, PuzzleButton prev) {
-        Integer rowCurr, columnCurr, rowPrev, columnPrev;
-        rowCurr = TablePuzzles.getPuzzlePos(curr)[0];
-        columnCurr = TablePuzzles.getPuzzlePos(curr)[1];
-        rowPrev = TablePuzzles.getPuzzlePos(prev)[0];
-        columnPrev = TablePuzzles.getPuzzlePos(prev)[1];
-        if (rowCurr < rowPrev && columnCurr == columnPrev) {return "MergeTop";};
-        if (rowCurr > rowPrev && columnCurr == columnPrev) {return "MergeBottom";};
+    public String getTrueMerge(PuzzleButton curr, PuzzleButton prev, PuzzleButton next) {
+        Integer rowCurr = null, columnCurr = null, rowPrev = null, columnPrev = null, rowNext = null, columnNext = null;
+        if (curr != null) {
+            rowCurr = TablePuzzles.getPuzzlePos(curr)[0];
+            columnCurr = TablePuzzles.getPuzzlePos(curr)[1];
+        }
+        if (prev != null) {
+            rowPrev = TablePuzzles.getPuzzlePos(prev)[0];
+            columnPrev = TablePuzzles.getPuzzlePos(prev)[1];
+        }
+        if (next != null) {
+            rowNext = TablePuzzles.getPuzzlePos(next)[0];
+            columnNext = TablePuzzles.getPuzzlePos(next)[1];
+        }
+        if (curr != null && prev != null && next == null) {
+            if (rowCurr < rowPrev && columnCurr.equals(columnPrev)) {
+                return "MergeTop";
+            }
+            if (rowCurr > rowPrev && columnCurr.equals(columnPrev)) {
+                return "MergeBottom";
+            }
+        }
+        if (curr != null && next != null && prev == null) {
+            if (rowCurr < rowNext && columnCurr.equals(columnNext)) {
+                return "MergeTop";
+            }
+            if (rowCurr > rowNext && columnCurr.equals(columnNext)) {
+                return "MergeBottom";
+            }
+        }
+        if (curr != null && next != null && prev != null) {
+            if (columnPrev.equals(columnNext)) {
+                return "MergeVert";
+            }
+            else return "MergeHorz";
+        }
         return "";
     }
 }
