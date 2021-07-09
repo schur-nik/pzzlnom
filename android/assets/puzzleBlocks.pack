@@ -1,12 +1,12 @@
 
 puzzleBlocks.png
-size: 1024, 128
+size: 2048, 128
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
 copper
   rotate: false
-  xy: 716, 2
+  xy: 920, 2
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
@@ -18,9 +18,23 @@ copperMergeBottom
   orig: 100, 100
   offset: 0, 0
   index: -1
+copperMergeBottomLeft
+  rotate: false
+  xy: 1124, 2
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+copperMergeBottomRight
+  rotate: false
+  xy: 1328, 2
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
 copperMergeHorz
   rotate: false
-  xy: 920, 2
+  xy: 1226, 2
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
@@ -41,6 +55,20 @@ copperMergeRight
   index: -1
 copperMergeTop
   rotate: false
+  xy: 716, 2
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+copperMergeTopLeft
+  rotate: false
+  xy: 614, 2
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+copperMergeTopRight
+  rotate: false
   xy: 512, 2
   size: 100, 100
   orig: 100, 100
@@ -48,7 +76,7 @@ copperMergeTop
   index: -1
 copperMergeVert
   rotate: false
-  xy: 818, 2
+  xy: 1022, 2
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
@@ -62,7 +90,7 @@ copperPress
   index: -1
 dirt
   rotate: false
-  xy: 614, 2
+  xy: 818, 2
   size: 100, 100
   orig: 100, 100
   offset: 0, 0

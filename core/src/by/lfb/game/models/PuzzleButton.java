@@ -4,18 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
+import com.badlogic.gdx.utils.Array;
 
-import java.util.Iterator;
+import java.util.Arrays;
 
 public class PuzzleButton extends TextButton{
 
@@ -39,7 +36,7 @@ public class PuzzleButton extends TextButton{
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                for (PuzzleButton puzzleButton : ComboList.getComboList()) {
+                for (PuzzleButton puzzleButton : new Array.ArrayIterator<>(ComboList.getComboList())) {
                     puzzleButton.getStyle().up = getPuzzleSkin().getDrawable(puzzleButton.TYPE);
                 }
                 ComboList.clearCombo();
@@ -58,13 +55,15 @@ public class PuzzleButton extends TextButton{
         this.addListener(new FocusListener() {
             @Override
             public boolean handle(Event event) {
-                if (!TablePuzzles.getPuzzlePos(event.getTarget().getParent()).equals(new Integer[]{-1, -1})) {
-                    if (!ComboList.containsInCombo((PuzzleButton) event.getTarget().getParent()) && ((PuzzleButton) event.getTarget().getParent()).getTYPE().equalsIgnoreCase(ComboList.getTypeCombo())) {
-                        setSkinLineCombo((PuzzleButton) event.getTarget().getParent());
-                        ComboList.addToCombo((PuzzleButton) event.getTarget().getParent());
-                    }
+                try {
+                    PuzzleButton puzzleButton = (PuzzleButton) event.getTarget().getParent();
+                        if (!ComboList.containsInCombo(puzzleButton) && puzzleButton.getTYPE().equalsIgnoreCase(ComboList.getTypeCombo()) && puzzleButton.canMerge(ComboList.getLast())) {
+                            setSkinLineCombo(puzzleButton);
+                            ComboList.addToCombo(puzzleButton);
+                        }
+                    return true;
                 }
-                return true;
+                catch (ClassCastException e) {return false;}
             }
 
             private void setSkinLineCombo(PuzzleButton puzzleButton) {
@@ -89,6 +88,21 @@ public class PuzzleButton extends TextButton{
                 return true;
             }
         });*/
+    }
+
+    private boolean canMerge(PuzzleButton last) {
+/*        Integer[] thisPos = TablePuzzles.getPuzzlePos(this);
+        if (Arrays.equals(thisPos, new Integer[]{TablePuzzles.getPuzzlePos(last)[0] - 1, TablePuzzles.getPuzzlePos(last)[1] - 1}))
+            return true;
+        else if (Arrays.equals(thisPos, new Integer[]{TablePuzzles.getPuzzlePos(last)[0] + 1, TablePuzzles.getPuzzlePos(last)[1] + 1}))
+            return true;
+        else if (Arrays.equals(thisPos, new Integer[]{TablePuzzles.getPuzzlePos(last)[0] + 1, TablePuzzles.getPuzzlePos(last)[1] - 1}))
+            return true;
+        else if (Arrays.equals(thisPos, new Integer[]{TablePuzzles.getPuzzlePos(last)[0] - 1, TablePuzzles.getPuzzlePos(last)[1] + 1}))
+            return true;
+        else
+            return false;*/
+        return true;
     }
 
     public static Skin getPuzzleSkin() {
@@ -145,6 +159,12 @@ public class PuzzleButton extends TextButton{
             if (rowCurr > rowPrev && columnCurr.equals(columnPrev)) {
                 return "MergeBottom";
             }
+            if (rowCurr.equals(rowPrev) && columnCurr > columnPrev) {
+                return "MergeRight";
+            }
+            if (rowCurr.equals(rowPrev) && columnCurr < columnPrev) {
+                return "MergeLeft";
+            }
         }
         if (curr != null && next != null && prev == null) {
             if (rowCurr < rowNext && columnCurr.equals(columnNext)) {
@@ -153,12 +173,32 @@ public class PuzzleButton extends TextButton{
             if (rowCurr > rowNext && columnCurr.equals(columnNext)) {
                 return "MergeBottom";
             }
+            if (rowCurr.equals(rowNext) && columnCurr > columnNext) {
+                return "MergeRight";
+            }
+            if (rowCurr.equals(rowNext) && columnCurr < columnNext) {
+                return "MergeLeft";
+            }
         }
         if (curr != null && next != null && prev != null) {
             if (columnPrev.equals(columnNext)) {
                 return "MergeVert";
             }
-            else return "MergeHorz";
+            if (rowPrev.equals(rowNext)) {
+                return "MergeHorz";
+            }
+            if (rowPrev < rowNext && columnPrev < columnNext) {
+                return "MergeTopLeft";
+            }
+            if (rowPrev > rowNext && columnPrev < columnNext) {
+                return "MergeTopRight";
+            }
+            if (rowPrev < rowNext && columnPrev > columnNext) {
+                return "MergeBottomRight";
+            }
+            if (rowPrev > rowNext && columnPrev > columnNext) {
+                return "MergeBottomLeft";
+            }
         }
         return "";
     }

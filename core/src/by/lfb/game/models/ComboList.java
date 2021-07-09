@@ -35,6 +35,7 @@ public class ComboList {
     public static PuzzleButton getLast() {
         return comboList.get(comboList.size-1);
     }
+
     public static PuzzleButton getPrevLast() {
         if (comboList.size > 1)
             return comboList.get(comboList.size-2);
